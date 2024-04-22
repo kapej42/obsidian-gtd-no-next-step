@@ -54,15 +54,33 @@ const clearAllBadges = (fileItem) => {
 }
 
 const paintFileBadge = (opts, fileItem) => {
+	// Is fileItem in a folder? 
+	const slashes = fileItem.file.path.match(/\//g);
+	const fileInFolder = slashes ? slashes.length > 1 : 0
+	const folderItem = this.app.workspace.getLeavesOfType('file-explorer')[0].view.fileItems[fileItem.file.parent.path]
+
 	const {nextStep, waitingFor} = opts || {}
 	if (!nextStep && !waitingFor) {
 		fileItem.coverEl.removeClass('gtd-waiting-for')
 		fileItem.coverEl.addClass('gtd-no-next-step')
+
+		if (fileInFolder) { 
+			folderItem.coverEl.removeClass('gtd-waiting-for')
+			folderItem.coverEl.addClass('gtd-no-next-step')
+		}
 	} else if (waitingFor) {
 		fileItem.coverEl.removeClass('gtd-no-next-step')
 		fileItem.coverEl.addClass('gtd-waiting-for')
+		
+		if (fileInFolder) { 
+			folderItem.coverEl.removeClass('gtd-no-next-step')
+			folderItem.coverEl.addClass('gtd-waiting-for')
+		}
 	} else {
 		clearAllBadges(fileItem)
+		if (fileInFolder) { 
+			clearAllBadges(folderItem)
+		}
 	}
 }
 
