@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/Example.md",
+                "file": "Projects/Project in a folder/Project in a Folder.md",
                 "mode": "source",
                 "backlinks": false,
                 "source": false
@@ -57,7 +57,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 350.5
   },
   "right": {
     "id": "ab6ae738fa12851d",
@@ -76,9 +76,11 @@
   },
   "active": "cfac32c7e03ebb33",
   "lastOpenFiles": [
-    "Hello World.md",
-    "Templates/Plugin Test.md",
     "Projects/Example.md",
+    "Projects/Example frontmatter tag.md",
+    "Templates/Plugin Test.md",
+    "Hello World.md",
+    "Projects/Project in a folder/Project in a Folder.md",
     "test-2023-12-16.md",
     "Projects",
     "Templates"
