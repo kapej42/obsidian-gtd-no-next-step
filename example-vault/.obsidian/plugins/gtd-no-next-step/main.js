@@ -5,6 +5,7 @@ const DEFAULT_SETTINGS = {
 	waitingForTag: '#waiting-for',
 	projectsFolderPrefix: 'Projects/',
 	projectTag: '#project',
+	RequireProjectTag: true,
 	projectFileCache: {
 		// ['Projects/example.md']: { mtime: 123, nextStep: true, waitingFor: true }
 	},
@@ -85,7 +86,46 @@ const paintFileBadge = (opts, fileItem) => {
 	}
 }
 
+function getFileByPath(filepath) {
+	const files = this.app.vault.getFiles();
+	const fileFound = files.find(file => file.path === filepath)
+	if(fileFound){
+		return fileFound
+	} else {
+		return "Not a file"
+	}
+}
 
+function containsTag(file, tag) {
+	
+	const metadata = app.metadataCache.getFileCache(file).tags?.map(a => a.tag);
+	
+	// Check if the file contains the tag
+	let containsTagFile = false
+	if (metadata && metadata.includes(tag)) {
+		//console.log(`The tag ${tag} is present in the file`)
+		containsTagFile = true
+  	} else {
+		//console.log(`The tag ${tag} is not present in the file`)
+		containsTagFile = false
+  	}
+
+	// Check if the frontmatter contains the tag
+	const frontMatterTags = app.metadataCache.getCache(file.path).frontmatter?.tags;
+	let containstTagFrontMatter = false
+
+	tagWithoutHash = tag.replace('#', '');
+
+	if (frontMatterTags && frontMatterTags.includes(tagWithoutHash)) {
+		//console.log(`The tag ${tagWithoutHash} is present in the front matter.`)
+		containstTagFrontMatter = true
+	} else {
+		//console.log(`The tag ${tagWithoutHash} is not present in the front matter.`)
+		containstTagFrontMatter = false
+	}
+	
+	return containstTagFrontMatter || containsTagFile
+}
 
 module.exports = class GtdNoNextStep extends Plugin {
 	async onload() {
@@ -115,9 +155,30 @@ module.exports = class GtdNoNextStep extends Plugin {
 		await this.saveData(this.settings || DEFAULT_SETTINGS)
 	}
 
-	isProjectFile = filename => filename.startsWith(this.settings.projectsFolderPrefix)
-		&& filename.endsWith('.md')
-		&& !filename.includes('/_')
+	isProjectFile = (filename) => {
+		
+		let hasProjectTag = false
+		const file = getFileByPath(filename)
+
+		if( file != "Not a file" ) {
+			//console.log("file:"+filename)
+			hasProjectTag = containsTag(file, this.settings.projectTag)
+		} else {
+			//console.log("Not a file:"+filename)
+		}
+
+		this.settings.RequireProjectTag = Boolean(this.settings.RequireProjectTag)
+		if( this.settings.RequireProjectTag ){
+			return filename.startsWith(this.settings.projectsFolderPrefix)
+			&& filename.endsWith('.md')
+			&& !filename.includes('/_') 
+			&& hasProjectTag
+		} else { 
+		 	return filename.startsWith(this.settings.projectsFolderPrefix)
+		 	&& filename.endsWith('.md')
+		 	&& !filename.includes('/_') 
+		}
+	}
 
 	containsIncompleteNextStepOrWaitingFor = string => findNextStepOrWaitingFor(string, this.nextStepTagRegex, this.waitingForTagRegex)
 
@@ -242,6 +303,17 @@ class SettingTab extends PluginSettingTab {
 						this.plugin.settings.waitingForTag = value
 						await this.plugin.saveSettings()
 					})
+			)
+		
+		new Setting(containerEl)
+			.setName('Require Project Tag?')
+			.setDesc('With this setting enabled, badges will only appear on files (and their containing folder) with the project tag.')
+			.addToggle(toggle => toggle
+						.setValue(this.plugin.settings.RequireProjectTag)
+						.onChange(async (value) => {
+							this.plugin.settings.RequireProjectTag = value; 
+							await this.plugin.saveSettings();
+						})
 			)
 		new Setting(containerEl)
 			.setName('Project tag')
