@@ -2,7 +2,10 @@
 The main "badge" styles.
 */
 .nav-files-container .nav-file-title.gtd-no-next-step .nav-file-title-content:after,
-.nav-files-container .nav-file-title.gtd-waiting-for .nav-file-title-content:after {
+.nav-files-container .nav-file-title.gtd-waiting-for .nav-file-title-content:after,
+.nav-files-container .nav-folder-title.gtd-no-next-step .nav-folder-title-content:after,
+.nav-files-container .nav-folder-title.gtd-waiting-for .nav-folder-title-content:after
+{
 	color: white;
 	border-radius: 4px;
 	font-size: 8px;
@@ -16,7 +19,8 @@ The main "badge" styles.
 /*
 No next-step tag found is a serious problem.
 */
-.nav-files-container .nav-file-title.gtd-no-next-step .nav-file-title-content:after {
+.nav-files-container .nav-file-title.gtd-no-next-step .nav-file-title-content:after,
+.nav-files-container .nav-folder-title.gtd-no-next-step .nav-folder-title-content:after {
 	content: 'No Next';
 	background-color: #ff5b00;
 }
@@ -25,7 +29,8 @@ No next-step tag found is a serious problem.
 No next-step tag but a waiting-for tag is not a
 problem, but it is something to be aware of.
 */
-.nav-files-container .nav-file-title.gtd-waiting-for .nav-file-title-content:after {
+.nav-files-container .nav-file-title.gtd-waiting-for .nav-file-title-content:after,
+.nav-files-container .nav-folder-title.gtd-waiting-for .nav-folder-title-content:after {
 	content: 'Waiting';
 	background-color: #8e8e8e;
 }
