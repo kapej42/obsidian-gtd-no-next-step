@@ -102,13 +102,16 @@ function containsTag(file, tag) {
 	
 	// Check if the file contains the tag
 	let containsTagFile = false
-	if (metadata && metadata.includes(tag)) {
-		//console.log(`The tag ${tag} is present in the file`)
-		containsTagFile = true
-  	} else {
-		//console.log(`The tag ${tag} is not present in the file`)
-		containsTagFile = false
-  	}
+	if (Array.isArray(metadata)){
+
+		if( metadata.filter(tg => tg.includes(tag)).length > 0) {
+			//console.log(`The tag ${tag} is present in the file`)
+			containsTagFile = true
+  		} else {
+			//console.log(`The tag ${tag} is not present in the file`)
+			containsTagFile = false
+  		}
+	}
 
 	// Check if the frontmatter contains the tag
 	const frontMatterTags = app.metadataCache.getCache(file.path).frontmatter?.tags;
@@ -116,12 +119,15 @@ function containsTag(file, tag) {
 
 	tagWithoutHash = tag.replace('#', '');
 
-	if (frontMatterTags && frontMatterTags.includes(tagWithoutHash)) {
-		//console.log(`The tag ${tagWithoutHash} is present in the front matter.`)
-		containstTagFrontMatter = true
-	} else {
-		//console.log(`The tag ${tagWithoutHash} is not present in the front matter.`)
-		containstTagFrontMatter = false
+	if (Array.isArray(frontMatterTags)) {
+
+		if (frontMatterTags.filter(tg => tg.includes(tagWithoutHash)).length > 0) {
+			//console.log(`The tag ${tagWithoutHash} is present in the front matter.`)
+			containstTagFrontMatter = true
+		} else {
+			//console.log(`The tag ${tagWithoutHash} is not present in the front matter.`)
+			containstTagFrontMatter = false
+		}
 	}
 	
 	return containstTagFrontMatter || containsTagFile
@@ -167,8 +173,7 @@ module.exports = class GtdNoNextStep extends Plugin {
 			//console.log("Not a file:"+filename)
 		}
 
-		this.settings.RequireProjectTag = Boolean(this.settings.RequireProjectTag)
-		if( this.settings.RequireProjectTag ){
+		if( Boolean(this.settings.RequireProjectTag) ){
 			return filename.startsWith(this.settings.projectsFolderPrefix)
 			&& filename.endsWith('.md')
 			&& !filename.includes('/_') 
