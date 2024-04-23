@@ -4,6 +4,7 @@ const DEFAULT_SETTINGS = {
 	nextStepTag: '#next-step',
 	waitingForTag: '#waiting-for',
 	projectsFolderPrefix: 'Projects/',
+	projectTag: '#project',
 	projectFileCache: {
 		// ['Projects/example.md']: { mtime: 123, nextStep: true, waitingFor: true }
 	},
@@ -239,6 +240,18 @@ class SettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.waitingForTag)
 					.onChange(async (value) => {
 						this.plugin.settings.waitingForTag = value
+						await this.plugin.saveSettings()
+					})
+			)
+		new Setting(containerEl)
+			.setName('Project tag')
+			.setDesc('The tag that indicates a file is a project file (handy in case you  store project related files in a project folder).')
+			.addText(
+				text => text
+					.setPlaceholder(DEFAULT_SETTINGS.projectTag)
+					.setValue(this.plugin.settings.projectTag)
+					.onChange(async (value) => {
+						this.plugin.settings.projectTag = value
 						await this.plugin.saveSettings()
 					})
 			)
